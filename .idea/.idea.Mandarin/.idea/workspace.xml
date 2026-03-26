@@ -10,15 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="52115076-7a7a-4fa9-aa6d-cd1a577ec7c8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Application/Interfaces/IApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Application/Interfaces/IApplicationDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/Auction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/Auction.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/Bid.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/Bid.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/Mandarin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/Mandarin.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Domain/Entities/User.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Infrastructure/BackgroundJobs/SpoilageCleanupJob.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Infrastructure/BackgroundJobs/SpoilageCleanupJob.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Infrastructure/Persistence/ApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Infrastructure/Persistence/ApplicationDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Infrastructure/Persistence/Configurations/AuctionConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Infrastructure/Persistence/Configurations/AuctionConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MandarinAuction.Infrastructure/Services/EmailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.Infrastructure/Services/EmailService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MandarinAuction.API/MandarinAuction.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.API/MandarinAuction.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MandarinAuction.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MandarinAuction.API/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +144,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774514333559</updated>
-      <workItem from="1774514335558" duration="18416000" />
+      <workItem from="1774514335558" duration="19597000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -161,7 +154,31 @@
       <option name="project" value="LOCAL" />
       <updated>1774530101543</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Добавлена реализация EmailService.cs с логированием в консоль.">
+      <option name="closed" value="true" />
+      <created>1774534576281</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1774534576281</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Добавлена реализация ApplicationDbContext.cs">
+      <option name="closed" value="true" />
+      <created>1774534593105</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1774534593105</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Мелкие исправления.">
+      <option name="closed" value="true" />
+      <created>1774534621301</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1774534621301</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,7 +200,10 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Initial commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial commit" />
+    <MESSAGE value="Добавлена реализация EmailService.cs с логированием в консоль." />
+    <MESSAGE value="Добавлена реализация ApplicationDbContext.cs" />
+    <MESSAGE value="Мелкие исправления." />
+    <option name="LAST_COMMIT_MESSAGE" value="Мелкие исправления." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
