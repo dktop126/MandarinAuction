@@ -5,11 +5,11 @@
 /// </summary>
 public class Bid
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public Guid AuctionId { get; set; }
-    public Guid UserId { get; set; }
-    public decimal Amount { get; set; }
-    public DateTime Timestamp { get; set; } =  DateTime.UtcNow;
+    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid AuctionId { get; private set; }
+    public Guid UserId { get; private set; }
+    public decimal Amount { get; private set; }
+    public DateTime Timestamp { get; set; }
     public Auction? Auction { get; set; }
     public User? User { get; set; }
 

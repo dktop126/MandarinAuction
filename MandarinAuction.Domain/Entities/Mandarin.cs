@@ -7,18 +7,22 @@ namespace MandarinAuction.Domain.Entities;
 /// </summary>
 public class Mandarin
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime SpoilAt { get; set; }
     public MandarinStatus Status { get; set; }
 
+    /// <summary>
+    /// Помечает мандарин как испорченный, если срок годности истёк.
+    /// Не применяется к проданным лотам.
+    /// </summary>
     public void MarkAsSpoiled(DateTime currentTime)
     {
         if (Status == MandarinStatus.Sold)
             return;
-        
-        if (Status != MandarinStatus.Spoiled && SpoilAt < currentTime)
+
+        if (SpoilAt < currentTime)
         {
             Status = MandarinStatus.Spoiled;
         }

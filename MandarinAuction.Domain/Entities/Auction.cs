@@ -17,8 +17,8 @@ public class Auction
     public Guid? PreviousBidderId { get; private set; }
     public Guid? LastBidderId { get; private set; }
     public AuctionStatus Status { get; private set; }
-    
-    public byte[] RowVersion { get; set; }
+
+    public byte[]? RowVersion { get; set; }
 
     public Auction(Guid mandarinId, decimal startingPrice, DateTime endTime)
     {
@@ -31,6 +31,11 @@ public class Auction
         Status = AuctionStatus.Active;
     }
 
+    /// <summary>
+    /// Делает ставку. Проверяет статус аукциона и минимальную сумму.
+    /// </summary>
+    /// <exception cref="AuctionClosedException">Если аукцион закрыт.</exception>
+    /// <exception cref="BidTooLowException">Если ставка меньше текущей или является максимальной.</exception>
     public void PlaceBid(Guid newBidderId, decimal amount)
     {
         if (Status == AuctionStatus.Closed || DateTime.UtcNow > EndTime)
@@ -40,7 +45,7 @@ public class Auction
             throw new BidTooLowException("Ставка должна быть выше текущей.");
 
         if (newBidderId == LastBidderId)
-            throw new Exception("Ваша ставка уже является максимальной.");
+            throw new BidTooLowException("Ваша ставка уже является максимальной.");
 
         PreviousBidderId = LastBidderId;
         LastBidderId = newBidderId;
@@ -49,7 +54,7 @@ public class Auction
 
     public void CloseAsSpoiled()
     {
-        if (Status == AuctionStatus.Closed || Status== AuctionStatus.Finished)
+        if (Status == AuctionStatus.Closed || Status == AuctionStatus.Finished)
             return;
         Status = AuctionStatus.Closed;
     }

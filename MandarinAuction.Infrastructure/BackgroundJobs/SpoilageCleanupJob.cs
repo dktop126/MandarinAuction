@@ -24,10 +24,7 @@ public class SpoilageCleanupJob
 
             var activeAuctions = await _context.Auctions
                 .FirstOrDefaultAsync(a => a.MandarinId == mandarin.Id && a.Status == AuctionStatus.Active);
-            if (activeAuctions != null)
-            {
-                activeAuctions.CloseAsSpoiled();
-            }
+            activeAuctions?.CloseAsSpoiled();
         }
         
         await _context.SaveChangesAsync();

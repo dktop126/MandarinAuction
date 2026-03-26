@@ -7,17 +7,17 @@ namespace MandarinAuction.Domain.Entities;
 /// </summary>
 public class User
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; private set; } = Guid.NewGuid();
     public string Email { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public string? OtpCode { get; set; }
     public DateTime? OtpExpiresAt { get; set; }
 
-    public ICollection<Bid> Bids { get; set; }
+    public ICollection<Bid> Bids { get; set; } =  new List<Bid>();
 
     public void SetEmail(string email)
     {
-        string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        const string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         if (string.IsNullOrWhiteSpace(email) || !Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase))
             throw new ArgumentException("Некорректный email.", nameof(email));
         Email = email.ToLower();
@@ -41,7 +41,7 @@ public class User
     
     public void ClearOtpCode()
     {
-        OtpCode = string.Empty;
+        OtpCode = null;
         OtpExpiresAt = null;
     }
 }

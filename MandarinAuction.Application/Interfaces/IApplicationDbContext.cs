@@ -8,5 +8,6 @@ public interface IApplicationDbContext
     DbSet<Mandarin> Mandarins { get; }
     DbSet<Auction> Auctions { get; }
     DbSet<User> Users { get; }
-    Task<int> SaveChangesAsync();
+    DbSet<Bid> Bids { get; }
+    Task SaveChangesAsync();
 }
