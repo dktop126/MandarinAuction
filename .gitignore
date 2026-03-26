@@ -1,0 +1,42 @@
+# === JETBRAINS RIDER ===
+.idea/
+*.iml
+*.sln.iml
+*.sln.DotSettings.user
+*.DotSettings.user
+*.user
+*.pidb
+*.sess
+
+# === BUILD OUTPUTS ===
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+
+# === SECRETS ===
+appsettings.local.json
+appsettings.*.local.json
+secrets.json
+*.pfx
+**/.env
+**/.env.local
+
+# === DATABASE ===
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# === LOGS ===
+*.log
+logs/
+TestResults/
+coverage/
+
+# === OS ===
+.DS_Store
+Thumbs.db

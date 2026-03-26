@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.API", "MandarinAuction.API\MandarinAuction.API.csproj", "{40CFAECB-7E94-4157-A643-7D7AA14A9E5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.Domain", "MandarinAuction.Domain\MandarinAuction.Domain.csproj", "{0474BAB5-C729-4DEC-8647-681E6E1A5649}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.Application", "MandarinAuction.Application\MandarinAuction.Application.csproj", "{388C519E-907A-4B63-BBCA-2822B2A0FBCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.Infrastructure", "MandarinAuction.Infrastructure\MandarinAuction.Infrastructure.csproj", "{91C063B6-8BD0-421B-BC23-2CFFDBE8A06D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40CFAECB-7E94-4157-A643-7D7AA14A9E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40CFAECB-7E94-4157-A643-7D7AA14A9E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40CFAECB-7E94-4157-A643-7D7AA14A9E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40CFAECB-7E94-4157-A643-7D7AA14A9E5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0474BAB5-C729-4DEC-8647-681E6E1A5649}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0474BAB5-C729-4DEC-8647-681E6E1A5649}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0474BAB5-C729-4DEC-8647-681E6E1A5649}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0474BAB5-C729-4DEC-8647-681E6E1A5649}.Release|Any CPU.Build.0 = Release|Any CPU
+		{388C519E-907A-4B63-BBCA-2822B2A0FBCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{388C519E-907A-4B63-BBCA-2822B2A0FBCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{388C519E-907A-4B63-BBCA-2822B2A0FBCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{388C519E-907A-4B63-BBCA-2822B2A0FBCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91C063B6-8BD0-421B-BC23-2CFFDBE8A06D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91C063B6-8BD0-421B-BC23-2CFFDBE8A06D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91C063B6-8BD0-421B-BC23-2CFFDBE8A06D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91C063B6-8BD0-421B-BC23-2CFFDBE8A06D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
