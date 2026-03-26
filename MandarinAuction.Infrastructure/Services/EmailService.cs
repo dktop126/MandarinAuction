@@ -34,7 +34,7 @@ public class EmailService : IEmailService
         return Task.CompletedTask;
     }
 
-    public Task SendWinRecieptNotificationAsync(string userEmail, Guid auctionId, decimal price)
+    public Task SendWinReceiptNotificationAsync(string userEmail, Guid auctionId, decimal price)
     {
         _logger.LogInformation(
             "[Чек] Email: {Email}, Аукцион: {AuctionId}, Сумма: {Price}",
