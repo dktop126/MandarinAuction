@@ -1,6 +1,42 @@
-﻿namespace MandarinAuction.Application.Features.Auctions;
+﻿using MandarinAuction.Application.DTOs;
+using MandarinAuction.Application.Interfaces;
+using MandarinAuction.Domain.Entities;
+using MandarinAuction.Domain.Enums;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
-public class GetActiveAuctionsQuery
+namespace MandarinAuction.Application.Features.Auctions;
+
+public class GetActiveAuctionsQuery : IRequest<IReadOnlyList<AuctionDto>>;
+
+public class GetActiveAuctionsQueryHandler : IRequestHandler<GetActiveAuctionsQuery, IReadOnlyList<AuctionDto>>
 {
+    private readonly IApplicationDbContext _context;
     
+    public GetActiveAuctionsQueryHandler(IApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<IReadOnlyList<AuctionDto>> Handle(GetActiveAuctionsQuery request,
+        CancellationToken cancellationToken)
+    {
+        var auctions = await _context.Auctions
+            .Where(a => a.Status == AuctionStatus.Active && a.EndTime > DateTime.UtcNow)
+            .Include(a => a.Mandarin)
+            .Select(a => new AuctionDto
+            {
+                Id = a.Id,
+                MandarinId = a.MandarinId,
+                MandarinName = a.Mandarin.Name,
+                CurrentPrice = a.CurrentPrice,
+                StartingPrice = a.StartingPrice,
+                EndTime = a.EndTime,
+                Status = a.Status,
+                BidCount = _context.Bids.Count(b => b.AuctionId == a.Id)
+            })
+            .ToListAsync(cancellationToken);
+
+        return auctions;
+    }
 }
