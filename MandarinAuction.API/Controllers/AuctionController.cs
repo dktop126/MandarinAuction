@@ -26,7 +26,7 @@ public class AuctionController : ControllerBase
         return Ok(auctions);
     }
 
-    [HttpPost("{id}/bid")]
+    [HttpPost("{id}/bids")]
     [Authorize]
     public async Task<IActionResult> PlaceBid(Guid id, [FromBody] PlaceBidDto dto)
     {
@@ -35,7 +35,7 @@ public class AuctionController : ControllerBase
             return Unauthorized();
 
         var command = new PlaceBidCommand(id, Guid.Parse(userId), dto.Amount);
-        await _mediator.Send(command);
-        return Ok(new { message = "Ставка принята." });
+        var auction = await _mediator.Send(command);
+        return Ok(auction);
     }
 }

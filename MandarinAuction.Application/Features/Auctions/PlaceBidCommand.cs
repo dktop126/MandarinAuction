@@ -1,4 +1,5 @@
-﻿using MandarinAuction.Application.Interfaces;
+﻿using MandarinAuction.Application.DTOs;
+using MandarinAuction.Application.Interfaces;
 using MandarinAuction.Domain.Entities;
 using MandarinAuction.Domain.Exceptions;
 using MediatR;
@@ -6,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MandarinAuction.Application.Features.Auctions;
 
-public record PlaceBidCommand(Guid AuctionId, Guid UserId, decimal Amount) : IRequest<Unit>;
+public record PlaceBidCommand(Guid AuctionId, Guid UserId, decimal Amount) : IRequest<AuctionDto>;
 
-public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Unit>
+public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, AuctionDto>
 {
     private readonly IApplicationDbContext _context;
     private readonly IEmailService _emailService;
@@ -19,10 +20,11 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Unit>
         _emailService = emailService;
     }
 
-    public async Task<Unit> Handle(PlaceBidCommand request, CancellationToken cancellationToken)
+    public async Task<AuctionDto> Handle(PlaceBidCommand request, CancellationToken cancellationToken)
     {
         var auction = await _context.Auctions
-            .FindAsync(new object[] { request.AuctionId }, cancellationToken);
+            .Include(a => a.Mandarin)
+            .FirstOrDefaultAsync(a => a.Id == request.AuctionId, cancellationToken);
 
         if (auction == null)
             throw new NotFoundException($"Аукцион {request.AuctionId} не найден.");
@@ -35,13 +37,25 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Unit>
 
         await _context.SaveChangesAsync();
 
-        if (!previousBidderId.HasValue) return Unit.Value;
-        var previousBidder = await _context.Users
-            .FindAsync(new object[] { previousBidderId.Value }, cancellationToken);
-        if (previousBidder != null)
-            await _emailService.SendOutbidNotificationAsync(previousBidder.Email, request.AuctionId,
-                request.Amount);
+        if (previousBidderId.HasValue)
+        {
+            var previousBidder = await _context.Users
+                .FindAsync(new object[] { previousBidderId.Value }, cancellationToken);
+            if (previousBidder != null)
+                await _emailService.SendOutbidNotificationAsync(previousBidder.Email, request.AuctionId,
+                    request.Amount);
+        }
 
-        return Unit.Value;
+        return new AuctionDto
+        {
+            Id = auction.Id,
+            MandarinId = auction.MandarinId,
+            MandarinName = auction.Mandarin?.Name ?? string.Empty,
+            CurrentPrice = auction.CurrentPrice,
+            StartingPrice = auction.StartingPrice,
+            EndTime = auction.EndTime,
+            Status = auction.Status,
+            BidCount = _context.Bids.Count(b => b.AuctionId == auction.Id),
+        };
     }
 }
