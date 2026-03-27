@@ -26,7 +26,7 @@ public class AuctionController : ControllerBase
         return Ok(auctions);
     }
 
-    [HttpGet("{id}/bid")]
+    [HttpPost("{id}/bid")]
     [Authorize]
     public async Task<IActionResult> PlaceBid(Guid id, [FromBody] PlaceBidDto dto)
     {
