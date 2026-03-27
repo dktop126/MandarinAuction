@@ -1,4 +1,5 @@
 using System.Text;
+using MandarinAuction.Application.Features.Auth;
 using MandarinAuction.Application.Interfaces;
 using MandarinAuction.Infrastructure.Persistence;
 using MandarinAuction.Infrastructure.Services;
@@ -16,6 +17,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetService<ApplicationDbContext>());
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// MediatR
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(RequestOtpCodeCommand).Assembly));
 
 // JWT
 builder.Services.AddAuthentication(options =>
@@ -50,6 +55,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

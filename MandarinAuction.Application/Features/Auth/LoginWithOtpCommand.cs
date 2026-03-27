@@ -1,18 +1,29 @@
-﻿using MandarinAuction.Application.Interfaces;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using MandarinAuction.Application.Interfaces;
+using MandarinAuction.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MandarinAuction.Application.Features.Auth;
 
 public record LoginWithOtpCommand(string Email, string OtpCode) : IRequest<LoginResult>;
 
-public record LoginResult(Guid UserId, string Email);
+public record LoginResult(Guid UserId, string Email, string Token);
 
 public class LoginWithOtpCommandHandler : IRequestHandler<LoginWithOtpCommand, LoginResult>
 {
     private readonly IApplicationDbContext _context;
-    
-    public LoginWithOtpCommandHandler(IApplicationDbContext context) =>  _context = context;
+    private readonly IConfiguration _config;
+
+    public LoginWithOtpCommandHandler(IApplicationDbContext context, IConfiguration config)
+    {
+        _context = context;
+        _config =  config;
+    }
 
     public async Task<LoginResult> Handle(LoginWithOtpCommand request, CancellationToken cancellationToken)
     {
@@ -24,7 +35,32 @@ public class LoginWithOtpCommandHandler : IRequestHandler<LoginWithOtpCommand, L
         user.ClearOtpCode();
         await _context.SaveChangesAsync();
         
-        return new LoginResult(user.Id, user.Email);
+        var token = GenerateJwt(user);
+        
+        return new LoginResult(user.Id, user.Email, token);
+    }
+    
+    private string GenerateJwt(User user)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "default-secret-key-for-testing"));
+        
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Username)
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(7),
+            signingCredentials: credentials
+        );
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
     
 }
