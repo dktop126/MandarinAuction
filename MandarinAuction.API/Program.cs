@@ -1,6 +1,7 @@
 using System.Text;
 using MandarinAuction.Application.Interfaces;
 using MandarinAuction.Infrastructure.Persistence;
+using MandarinAuction.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,12 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 // Регистрация интерфейсов
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetService<ApplicationDbContext>());
-builder.Services.AddScoped<IEmailService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // JWT
 builder.Services.AddAuthentication(options =>
