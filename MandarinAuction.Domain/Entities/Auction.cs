@@ -10,6 +10,7 @@ public class Auction
 {
     public Guid Id { get; private set; }
     public Guid MandarinId { get; private set; }
+    public Mandarin? Mandarin { get; set; }
     public decimal StartingPrice { get; private set; }
     public decimal CurrentPrice { get; private set; }
     public DateTime StartTime { get; private set; }

@@ -12,6 +12,7 @@ public class Mandarin
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime SpoilAt { get; set; }
     public MandarinStatus Status { get; set; }
+    public Auction? Auction { get; set; }
 
     /// <summary>
     /// Помечает мандарин как испорченный, если срок годности истёк.
