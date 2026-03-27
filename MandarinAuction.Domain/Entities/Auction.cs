@@ -54,7 +54,7 @@ public class Auction
 
     public void CloseAsSpoiled()
     {
-        if (Status == AuctionStatus.Closed || Status == AuctionStatus.Finished)
+        if (Status is AuctionStatus.Closed or AuctionStatus.Finished)
             return;
         Status = AuctionStatus.Closed;
     }

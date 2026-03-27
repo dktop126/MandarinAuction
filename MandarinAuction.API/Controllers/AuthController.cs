@@ -58,12 +58,12 @@ public class AuthController : ControllerBase
         user.ClearOtpCode();
         await _context.SaveChangesAsync();
         
-        var token = GenerateJwtToken(user);
+        var token = GenerateJwt(user);
         
         return Ok(new { token, userId =  user.Id, email = user.Email });
     }
 
-    private string GenerateJwtToken(User user)
+    private string GenerateJwt(User user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "default-secret-key-for-testing"));
         
