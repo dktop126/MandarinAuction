@@ -1,4 +1,5 @@
 using System.Text;
+using MandarinAuction.API.Middleware;
 using MandarinAuction.Application.Features.Auth;
 using MandarinAuction.Application.Interfaces;
 using MandarinAuction.Infrastructure.BackgroundJobs;
@@ -80,6 +81,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

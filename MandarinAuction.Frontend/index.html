@@ -243,12 +243,40 @@
                 alert('Ставка сделана успешно!');
                 loadAuctions();
             } else {
-                const error = await response.json();
-                alert('Ошибка: ' + (error.message || 'Не удалось сделать ставку'));
+                console.log('=== Ошибка ставки ===');
+                console.log('Status:', response.status);
+                console.log('Status Text:', response.statusText);
+                console.log('Headers:', Object.fromEntries(response.headers.entries()));
+
+                const errorText = await response.text();
+                console.log('Raw response body:', errorText);
+
+                try {
+                    const error = JSON.parse(errorText);
+                    console.log('Parsed error object:', error);
+                    
+                    let errorMessage = 'Не удалось сделать ставку';
+
+                    if (error.title && error.detail) {
+                        errorMessage = `${error.title}: ${error.detail}`;
+                    } else if (error.title) {
+                        errorMessage = error.title;
+                    } else if (error.detail) {
+                        errorMessage = error.detail;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+
+                    console.log('Final error message for user:', errorMessage);
+                    alert('Ошибка: ' + errorMessage);
+                } catch (e) {
+                    console.error('Failed to parse error JSON:', e);
+                    alert('Ошибка: ' + (errorText || 'Не удалось сделать ставку'));
+                }
             }
         } catch (error) {
             alert('Ошибка соединения с сервером');
-            console.error(error);
+            console.error('Network error:', error);
         }
     }
 
