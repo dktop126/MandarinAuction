@@ -9,7 +9,7 @@ public class MandarinGeneratorHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<MandarinGeneratorHostedService> _logger;
-    private readonly TimeSpan _generationInterval = TimeSpan.FromHours(1);
+    private readonly TimeSpan _generationInterval = TimeSpan.FromSeconds(15);
 
     public MandarinGeneratorHostedService(
         IServiceProvider serviceProvider,

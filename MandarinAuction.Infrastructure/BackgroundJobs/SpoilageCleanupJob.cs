@@ -7,17 +7,19 @@ namespace MandarinAuction.Infrastructure.BackgroundJobs;
 public class SpoilageCleanupJob
 {
     private readonly IApplicationDbContext _context;
-    
+
     public SpoilageCleanupJob(IApplicationDbContext context) => _context = context;
 
-    public async Task CleanupSpoiledMandarins()
+    public async Task<int> CleanupSpoiledMandarins()
     {
         var now = DateTime.UtcNow;
         var expiredMandarins = await _context.Mandarins
             .Where(m => m.Status != MandarinStatus.Sold &&
-                        m.Status == MandarinStatus.Spoiled &&
+                        m.Status != MandarinStatus.Spoiled &&
                         m.SpoilAt < now).ToListAsync();
 
+        if (expiredMandarins.Count == 0)
+            return 0;
         foreach (var mandarin in expiredMandarins)
         {
             mandarin.MarkAsSpoiled(now);
@@ -26,7 +28,8 @@ public class SpoilageCleanupJob
                 .FirstOrDefaultAsync(a => a.MandarinId == mandarin.Id && a.Status == AuctionStatus.Active);
             activeAuctions?.CloseAsSpoiled();
         }
-        
+
         await _context.SaveChangesAsync();
+        return expiredMandarins.Count;
     }
 }

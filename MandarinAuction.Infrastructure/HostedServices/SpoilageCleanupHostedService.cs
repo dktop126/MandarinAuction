@@ -9,7 +9,7 @@ public class SpoilageCleanupHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<SpoilageCleanupHostedService> _logger;
-    private readonly TimeSpan _checkInterval = TimeSpan.FromMinutes(5);
+    private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(10);
 
     public SpoilageCleanupHostedService(
         IServiceProvider serviceProvider,
@@ -30,18 +30,26 @@ public class SpoilageCleanupHostedService : BackgroundService
                 using var scope = _serviceProvider.CreateScope();
                 var job = scope.ServiceProvider.GetRequiredService<SpoilageCleanupJob>();
 
-                await job.CleanupSpoiledMandarins();
-                
-                _logger.LogInformation("Очистка испорченных мандаринов выполнена в {Time}", DateTime.UtcNow);
+                var spoiledCount = await job.CleanupSpoiledMandarins();
+                if (spoiledCount > 0)
+                {
+                    _logger.LogInformation("{Count} испорченных мандаринов испортилось и было удалено из " +
+                                           "аукционов в {Time}", spoiledCount, DateTime.UtcNow);
+                }
+                else
+                {
+                    _logger.LogInformation("Испортившихся мандаринов нет");
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ошибка при очистке испорченных мандаринов в {Time}", DateTime.UtcNow);
+                _logger.LogError(ex, "Ошибка при очистке испорченных" +
+                                     " мандаринов в {Time}", DateTime.UtcNow);
             }
-            
+
             await Task.Delay(_checkInterval, stoppingToken);
         }
-        
+
         _logger.LogInformation("Spoilage Cleanup Service остановлен");
     }
 }
