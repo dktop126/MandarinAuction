@@ -24,8 +24,10 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // Background Jobs
 builder.Services.AddScoped<SpoilageCleanupJob>();
 builder.Services.AddScoped<MandarinGeneratorJob>();
+builder.Services.AddScoped<AuctionCompletionJob>();
 builder.Services.AddHostedService<SpoilageCleanupHostedService>();
 builder.Services.AddHostedService<MandarinGeneratorHostedService>();
+builder.Services.AddHostedService<AuctionCompletionHostedService>();
 
 // MediatR
 builder.Services.AddMediatR(cfg =>
