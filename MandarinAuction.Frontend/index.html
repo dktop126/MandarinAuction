@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandarin Auction - Демонстрация</title>
+</head>
+<body>
+<!-- Кнопка авторизации/регистрации -->
+<div style="margin-bottom: 20px;">
+    <button id="authBtn" onclick="openAuthModal()">Войти / Регистрация</button>
+    <span id="userInfo" style="margin-left: 10px; display: none;">
+            Привет, <span id="userEmail"></span>!
+            <button onclick="logout()">Выйти</button>
+        </span>
+</div>
+
+<!-- Список аукционов -->
+<div>
+    <h2>Активные аукционы</h2>
+    <div id="auctionsList">Загрузка...</div>
+</div>
+
+<!-- Модальное окно авторизации -->
+<div id="authModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; min-width: 300px;">
+        <h3 id="modalTitle">Вход / Регистрация</h3>
+
+        <!-- Шаг 1: Ввод почты -->
+        <div id="emailStep">
+            <p>Введите вашу почту:</p>
+            <input type="email" id="emailInput" placeholder="example@mail.ru" style="width: 100%; margin-bottom: 10px; padding: 5px;">
+            <button onclick="sendCode()">Отправить код</button>
+        </div>
+
+        <!-- Шаг 2: Ввод кода -->
+        <div id="codeStep" style="display: none;">
+            <p>Введите код из почты:</p>
+            <input type="text" id="codeInput" placeholder="123456" style="width: 100%; margin-bottom: 10px; padding: 5px;">
+            <button onclick="verifyCode()">Войти</button>
+        </div>
+
+        <button onclick="closeAuthModal()" style="margin-top: 10px;">Закрыть</button>
+        <p id="message" style="color: red;"></p>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'https://localhost:44316/api';
+    let token = localStorage.getItem('token');
+    let userEmail = localStorage.getItem('userEmail');
+
+    // Проверка авторизации при загрузке
+    if (token && userEmail) {
+        showUserInfo();
+    }
+
+    // Открытие модального окна
+    function openAuthModal() {
+        document.getElementById('authModal').style.display = 'block';
+        document.getElementById('emailStep').style.display = 'block';
+        document.getElementById('codeStep').style.display = 'none';
+        document.getElementById('message').textContent = '';
+        document.getElementById('emailInput').value = '';
+        document.getElementById('codeInput').value = '';
+    }
+
+    // Закрытие модального окна
+    function closeAuthModal() {
+        document.getElementById('authModal').style.display = 'none';
+    }
+
+    // Отправка кода на почту
+    async function sendCode() {
+        const email = document.getElementById('emailInput').value.trim();
+        if (!email) {
+            document.getElementById('message').textContent = 'Введите почту';
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('Email', email);
+
+            const response = await fetch(`${API_URL}/auth/request-code`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                document.getElementById('emailStep').style.display = 'none';
+                document.getElementById('codeStep').style.display = 'block';
+                document.getElementById('message').textContent = 'Код отправлен!';
+                document.getElementById('message').style.color = 'green';
+            } else {
+                document.getElementById('message').textContent = 'Ошибка отправки кода';
+                document.getElementById('message').style.color = 'red';
+            }
+        } catch (error) {
+            document.getElementById('message').textContent = 'Ошибка соединения с сервером';
+            console.error(error);
+        }
+    }
+
+    // Проверка кода и вход
+    async function verifyCode() {
+        const email = document.getElementById('emailInput').value.trim();
+        const code = document.getElementById('codeInput').value.trim();
+
+        if (!code) {
+            document.getElementById('message').textContent = 'Введите код';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    otpCode: code
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                token = data.token;
+                userEmail = data.email;
+                localStorage.setItem('token', token);
+                localStorage.setItem('userEmail', userEmail);
+
+                closeAuthModal();
+                showUserInfo();
+                loadAuctions();
+            } else {
+                document.getElementById('message').textContent = 'Неверный код или почта';
+                document.getElementById('message').style.color = 'red';
+            }
+        } catch (error) {
+            document.getElementById('message').textContent = 'Ошибка соединения с сервером';
+            console.error(error);
+        }
+    }
+
+    // Выход
+    function logout() {
+        token = null;
+        userEmail = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+        hideUserInfo();
+        loadAuctions();
+    }
+
+    // Показать информацию о пользователе
+    function showUserInfo() {
+        document.getElementById('authBtn').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'inline';
+        document.getElementById('userEmail').textContent = userEmail;
+    }
+
+    // Скрыть информацию о пользователе
+    function hideUserInfo() {
+        document.getElementById('authBtn').style.display = 'inline';
+        document.getElementById('userInfo').style.display = 'none';
+    }
+
+    // Загрузка списка аукционов
+    async function loadAuctions() {
+        const auctionsList = document.getElementById('auctionsList');
+        auctionsList.textContent = 'Загрузка...';
+
+        try {
+            const response = await fetch(`${API_URL}/auction`);
+
+            if (!response.ok) {
+                auctionsList.textContent = 'Ошибка загрузки аукционов';
+                return;
+            }
+
+            const auctions = await response.json();
+
+            if (auctions.length === 0) {
+                auctionsList.textContent = 'Нет активных аукционов';
+                return;
+            }
+
+            let html = '';
+            auctions.forEach(auction => {
+                html += `
+                        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                            <h4>Лот #${auction.id}</h4>
+                            <p><strong>Текущая цена:</strong> ${auction.currentPrice} ₽</p>
+                            <p><strong>Начальная цена:</strong> ${auction.startingPrice} ₽</p>
+                            <p><strong>Окончание:</strong> ${new Date(auction.endTime).toLocaleString()}</p>
+                            <p><strong>Статус:</strong> ${auction.status}</p>
+                            ${token ? `<button onclick="placeBid('${auction.id}', ${200})">Сделать ставку (200 ₽)</button>` : ''}
+                        </div>
+                    `;
+            });
+
+            auctionsList.innerHTML = html;
+        } catch (error) {
+            auctionsList.textContent = 'Ошибка загрузки аукционов';
+            console.error(error);
+        }
+    }
+
+    // Сделать ставку
+    async function placeBid(auctionId, amount) {
+        if (!token) {
+            alert('Сначала войдите в систему');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/auction/${auctionId}/bids`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    amount: amount
+                })
+            });
+
+            if (response.ok) {
+                alert('Ставка сделана успешно!');
+                loadAuctions();
+            } else {
+                const error = await response.json();
+                alert('Ошибка: ' + (error.message || 'Не удалось сделать ставку'));
+            }
+        } catch (error) {
+            alert('Ошибка соединения с сервером');
+            console.error(error);
+        }
+    }
+
+    // Загрузка аукционов при старте
+    loadAuctions();
+</script>
+</body>
+</html>

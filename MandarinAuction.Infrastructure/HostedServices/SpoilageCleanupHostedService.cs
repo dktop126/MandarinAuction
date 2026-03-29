@@ -9,7 +9,7 @@ public class SpoilageCleanupHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<SpoilageCleanupHostedService> _logger;
-    private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(10);
+    private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30);
 
     public SpoilageCleanupHostedService(
         IServiceProvider serviceProvider,
@@ -33,7 +33,7 @@ public class SpoilageCleanupHostedService : BackgroundService
                 var spoiledCount = await job.CleanupSpoiledMandarins();
                 if (spoiledCount > 0)
                 {
-                    _logger.LogInformation("{Count} испорченных мандаринов испортилось и было удалено из " +
+                    _logger.LogInformation("Количество испорченных мандаринов: {Count}, они были удалены из " +
                                            "аукционов в {Time}", spoiledCount, DateTime.UtcNow);
                 }
                 else
