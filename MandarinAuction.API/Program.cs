@@ -1,6 +1,8 @@
 using System.Text;
 using MandarinAuction.Application.Features.Auth;
 using MandarinAuction.Application.Interfaces;
+using MandarinAuction.Infrastructure.BackgroundJobs;
+using MandarinAuction.Infrastructure.HostedServices;
 using MandarinAuction.Infrastructure.Persistence;
 using MandarinAuction.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +19,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetService<ApplicationDbContext>());
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Background Jobs
+builder.Services.AddScoped<SpoilageCleanupJob>();
+builder.Services.AddScoped<MandarinGeneratorJob>();
+builder.Services.AddHostedService<SpoilageCleanupHostedService>();
+builder.Services.AddHostedService<MandarinGeneratorHostedService>();
 
 // MediatR
 builder.Services.AddMediatR(cfg =>
