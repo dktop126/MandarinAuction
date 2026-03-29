@@ -196,7 +196,13 @@
                             <p><strong>Начальная цена:</strong> ${auction.startingPrice} ₽</p>
                             <p><strong>Окончание:</strong> ${new Date(auction.endTime).toLocaleString()}</p>
                             <p><strong>Статус:</strong> ${auction.status}</p>
-                            ${token ? `<button onclick="placeBid('${auction.id}', ${200})">Сделать ставку (200 ₽)</button>` : ''}
+                            ${token ? `
+                                <div style="margin-top: 10px;">
+                                    <label>Размер ставки: </label>
+                                    <input type="number" id="bidAmount_${auction.id}" placeholder="Мин. 200 ₽" min="200" step="100" style="width: 150px; padding: 5px;">
+                                    <button onclick="placeBid('${auction.id}', document.getElementById('bidAmount_${auction.id}').value)">Сделать ставку</button>
+                                </div>
+                            ` : ''}
                         </div>
                     `;
             });
@@ -214,7 +220,13 @@
             alert('Сначала войдите в систему');
             return;
         }
-
+        
+        const bidAmount = parseFloat(amount);
+        if (!bidAmount || bidAmount < 200) {
+            alert('Минимальный размер ставки: 200 ₽');
+            return;
+        }
+        
         try {
             const response = await fetch(`${API_URL}/auction/${auctionId}/bids`, {
                 method: 'POST',
@@ -223,7 +235,7 @@
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    amount: amount
+                    amount: bidAmount
                 })
             });
 
@@ -242,6 +254,9 @@
 
     // Загрузка аукционов при старте
     loadAuctions();
+
+    // Автоматическое обновление списка аукционов каждые 5 секунд
+    //setInterval(loadAuctions, 5000);
 </script>
 </body>
 </html>
