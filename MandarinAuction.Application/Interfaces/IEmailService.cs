@@ -1,5 +1,8 @@
 ﻿namespace MandarinAuction.Application.Interfaces;
 
+/// <summary>
+/// Интерфейс сервиса для отправки email-уведомлений.
+/// </summary>
 public interface IEmailService
 {
     Task SendOtpCodeAsync(string userEmail, string? userOtpCode);

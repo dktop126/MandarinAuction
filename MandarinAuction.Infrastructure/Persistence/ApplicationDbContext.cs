@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MandarinAuction.Infrastructure.Persistence;
 
+/// <summary>
+/// Контекст базы данных для доступа к сущностям приложения.
+/// Реализует интерфейс IApplicationDbContext.
+/// </summary>
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

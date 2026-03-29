@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MandarinAuction.Infrastructure.Services;
 
+/// <summary>
+/// Сервис для отправки email-уведомлений.
+/// </summary>
 public class EmailService : IEmailService
 {
     private readonly ILogger<EmailService> _logger;

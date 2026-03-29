@@ -89,22 +89,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Use(async (context, next) =>
-{
-    var request = context.Request;
-    var origin = request.Headers["Origin"].ToString(); // Откуда пришел запрос (ваш фронтенд)
-    
-    Console.WriteLine($"[LOG] Поступил запрос: {request.Method} {request.Path}");
-    if (!string.IsNullOrEmpty(origin))
-    {
-        Console.WriteLine($"[LOG] Origin (источник): {origin}");
-    }
-    else
-    {
-        Console.WriteLine($"[LOG] Origin не указан (возможно, запрос из браузера без CORS или инструмент типа Postman)");
-    }
-
-    await next.Invoke();
-});
-
 app.Run();

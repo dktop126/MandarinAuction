@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MandarinAuction.API.Controllers;
 
+/// <summary>
+/// Контроллер для управления аукционами.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AuctionController : ControllerBase
@@ -18,6 +21,9 @@ public class AuctionController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Получает список всех активных аукционов.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetActiveAuctions()
     {
@@ -26,6 +32,9 @@ public class AuctionController : ControllerBase
         return Ok(auctions);
     }
 
+    /// <summary>
+    /// Размещает ставку в указанном аукционе (требуется авторизация).
+    /// </summary>
     [HttpPost("{id}/bids")]
     [Authorize]
     public async Task<IActionResult> PlaceBid(Guid id, [FromBody] PlaceBidDto dto)

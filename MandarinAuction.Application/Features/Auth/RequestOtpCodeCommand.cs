@@ -5,8 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MandarinAuction.Application.Features.Auth;
 
+/// <summary>
+/// Команда на запрос OTP-кода для авторизации.
+/// </summary>
 public record RequestOtpCodeCommand(string Email) : IRequest<Unit>;
 
+/// <summary>
+/// Обработчик команды запроса OTP-кода.
+/// Создает нового пользователя, если он не существует, генерирует OTP-код и отправляет его.
+/// </summary>
 public class RequestOtpCodeCommandHandler : IRequestHandler<RequestOtpCodeCommand, Unit>
 {
     private readonly IApplicationDbContext _context;

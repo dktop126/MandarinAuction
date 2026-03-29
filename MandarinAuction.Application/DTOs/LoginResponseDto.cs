@@ -1,5 +1,8 @@
 ﻿namespace MandarinAuction.Application.DTOs;
 
+/// <summary>
+///     DTO для ответа пользователю после успешной авторизации.
+/// </summary>
 public class LoginResponseDto
 {
     public Guid UserId { get; set; }

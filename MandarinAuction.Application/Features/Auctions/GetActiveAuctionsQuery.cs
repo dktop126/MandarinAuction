@@ -7,8 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MandarinAuction.Application.Features.Auctions;
 
+/// <summary>
+/// Запрос на получение списка активных аукционов.
+/// </summary>
 public class GetActiveAuctionsQuery : IRequest<IReadOnlyList<AuctionDto>>;
 
+/// <summary>
+/// Обработчик запроса на получение списка активных аукционов.
+/// </summary>
 public class GetActiveAuctionsQueryHandler : IRequestHandler<GetActiveAuctionsQuery, IReadOnlyList<AuctionDto>>
 {
     private readonly IApplicationDbContext _context;

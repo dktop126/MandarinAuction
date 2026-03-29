@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Identity\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\MandarinAuction.Application\MandarinAuction.Application.csproj" />
       <ProjectReference Include="..\MandarinAuction.Domain\MandarinAuction.Domain.csproj" />
     </ItemGroup>

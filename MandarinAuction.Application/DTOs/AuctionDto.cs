@@ -2,6 +2,9 @@
 
 namespace MandarinAuction.Application.DTOs;
 
+/// <summary>
+/// DTO для передачи данных аукциона.
+/// </summary>
 public class AuctionDto
 {
     public Guid Id { get; set; }

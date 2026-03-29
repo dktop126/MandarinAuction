@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MandarinAuction.Infrastructure.BackgroundJobs;
 
+/// <summary>
+/// Задача для очистки испорченных мандаринов.
+/// Помечает мандарины с истёкшим сроком годности как Spoiled и закрывает связанные аукционы.
+/// </summary>
 public class SpoilageCleanupJob
 {
     private readonly IApplicationDbContext _context;

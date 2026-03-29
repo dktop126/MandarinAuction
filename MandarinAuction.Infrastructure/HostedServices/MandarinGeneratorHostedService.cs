@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MandarinAuction.Infrastructure.HostedServices;
 
+/// <summary>
+/// Фоновый сервис для периодической генерации новых мандаринов.
+/// </summary>
 public class MandarinGeneratorHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;

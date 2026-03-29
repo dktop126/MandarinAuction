@@ -7,8 +7,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MandarinAuction.Application.Features.Auctions;
 
+/// <summary>
+/// Команда на размещение ставки.
+/// Содержит ID аукциона, ID пользователя и сумму ставки.
+/// </summary>
+/// <param name="AuctionId"></param>
+/// <param name="UserId"></param>
+/// <param name="Amount"></param>
 public record PlaceBidCommand(Guid AuctionId, Guid UserId, decimal Amount) : IRequest<AuctionDto>;
 
+/// <summary>
+/// Обработчик команды на размещение ставки.
+/// Проверяет аукцион, делает ставку, сохраняет её и отправляет уведомление предыдущему лидеру.
+/// </summary>
 public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, AuctionDto>
 {
     private readonly IApplicationDbContext _context;

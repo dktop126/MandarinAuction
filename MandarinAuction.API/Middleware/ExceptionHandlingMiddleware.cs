@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MandarinAuction.API.Middleware;
 
+/// <summary>
+/// Middleware для глобальной обработки исключений.
+/// Перехватывает исключения и возвращает соответствующие HTTP коды с информацией об ошибке.
+/// </summary>
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;

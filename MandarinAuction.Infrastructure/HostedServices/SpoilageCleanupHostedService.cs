@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MandarinAuction.Infrastructure.HostedServices;
 
+/// <summary>
+/// Фоновый сервис для периодической очистки испорченных мандаринов.
+/// </summary>
 public class SpoilageCleanupHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;

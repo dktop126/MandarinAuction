@@ -10,10 +10,25 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace MandarinAuction.Application.Features.Auth;
 
+/// <summary>
+/// Команда на вход пользователя с помощью Email и OTP-кода
+/// </summary>
+/// <param name="Email"></param>
+/// <param name="OtpCode"></param>
 public record LoginWithOtpCommand(string Email, string OtpCode) : IRequest<LoginResult>;
 
+/// <summary>
+/// Результат успешного входа.
+/// </summary>
+/// <param name="UserId">ID пользователя.</param>
+/// <param name="Email">email.</param>
+/// <param name="Token">JWT-токен.</param>
 public record LoginResult(Guid UserId, string Email, string Token);
 
+/// <summary>
+/// Обработчик команды входа по OTP-коду.
+/// Проверяет данные, генерирует JWT-токен и возвращает данные пользователя.
+/// </summary>
 public class LoginWithOtpCommandHandler : IRequestHandler<LoginWithOtpCommand, LoginResult>
 {
     private readonly IApplicationDbContext _context;
