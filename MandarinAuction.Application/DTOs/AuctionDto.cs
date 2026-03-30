@@ -10,6 +10,7 @@ public class AuctionDto
     public Guid Id { get; set; }
     public Guid MandarinId { get; set; }
     public string MandarinName { get; set; } = string.Empty;
+    public string MandarinImageUrl { get; set; } = string.Empty;
     public decimal CurrentPrice { get; set; }
     public decimal StartingPrice { get; set; }
     public decimal? BuyoutPrice { get; set; }

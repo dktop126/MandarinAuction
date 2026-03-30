@@ -9,6 +9,7 @@ public class Mandarin
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime SpoilAt { get; set; }
     public MandarinStatus Status { get; set; }

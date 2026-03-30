@@ -167,6 +167,16 @@
         document.getElementById('userInfo').style.display = 'none';
     }
 
+    // Перевод статуса в текстовый формат
+    function getAuctionStatusText(status) {
+        switch(status) {
+            case 0: return 'Активен';
+            case 1: return 'Завершён';
+            case 2: return 'Закрыт';
+            default: return 'Неизвестно';
+        }
+    }
+    
     // Загрузка списка аукционов
     async function loadAuctions() {
         const auctionsList = document.getElementById('auctionsList');
@@ -191,22 +201,27 @@
             auctions.forEach(auction => {
                 const minBid = auction.currentPrice + auction.minBidIncrement;
                 html += `
-                        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-                            <h4>Лот #${auction.id}</h4>
-                            <p><strong>Текущая цена:</strong> ${auction.currentPrice} ₽</p>
-                            <p><strong>Начальная цена:</strong> ${auction.startingPrice} ₽</p>
-                            ${auction.buyoutPrice ? `<p><strong>Цена выкупа:</strong> ${auction.buyoutPrice} ₽</p>` : ''}
-                            <p><strong>Окончание:</strong> ${new Date(auction.endTime).toLocaleString()}</p>
-                            <p><strong>Статус:</strong> ${auction.status}</p>
-                            ${token ? `
-                                <div style="margin-top: 10px;">
-                                    <label>Размер ставки: </label>
-                                    <input type="number" id="bidAmount_${auction.id}" placeholder="Мин. ${minBid} ₽" min="${minBid}" step="${auction.minBidIncrement}" style="width: 150px; padding: 5px;">
-                                    <button onclick="placeBid('${auction.id}', document.getElementById('bidAmount_${auction.id}').value)">Сделать ставку</button>
-                                    <button onclick="quickBid('${auction.id}', ${minBid})" style="margin-left: 5px;">+1 шаг</button>
-                                    ${auction.buyoutPrice ? `<button onclick="buyout('${auction.id}')" style="margin-left: 10px; background-color: #ff6b35; color: white;">Выкупить за ${auction.buyoutPrice} ₽</button>` : ''}
-                                </div>
-                            ` : ''}
+                        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; display: flex; gap: 15px;">
+                            <div style="flex-shrink: 0;">
+                                <img src="${auction.mandarinImageUrl}" alt="${auction.mandarinName}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <h4>${auction.mandarinName}</h4>
+                                <p><strong>Текущая цена:</strong> ${auction.currentPrice} ₽</p>
+                                <p><strong>Начальная цена:</strong> ${auction.startingPrice} ₽</p>
+                                ${auction.buyoutPrice ? `<p><strong>Цена выкупа:</strong> ${auction.buyoutPrice} ₽</p>` : ''}
+                                <p><strong>Окончание:</strong> ${new Date(auction.endTime).toLocaleString()}</p>
+                                <p><strong>Статус:</strong> ${getAuctionStatusText(auction.status)}</p>
+                                ${token ? `
+                                    <div style="margin-top: 10px;">
+                                        <label>Размер ставки: </label>
+                                        <input type="number" id="bidAmount_${auction.id}" placeholder="Мин. ${minBid} ₽" min="${minBid}" step="${auction.minBidIncrement}" style="width: 150px; padding: 5px;">
+                                        <button onclick="placeBid('${auction.id}', document.getElementById('bidAmount_${auction.id}').value)">Сделать ставку</button>
+                                        <button onclick="quickBid('${auction.id}', ${minBid})" style="margin-left: 5px;">+1 шаг</button>
+                                        ${auction.buyoutPrice ? `<button onclick="buyout('${auction.id}')" style="margin-left: 10px; background-color: #ff6b35; color: white;">Выкупить за ${auction.buyoutPrice} ₽</button>` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
                         </div>
                     `;
             });

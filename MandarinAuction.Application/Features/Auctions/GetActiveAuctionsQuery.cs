@@ -35,6 +35,7 @@ public class GetActiveAuctionsQueryHandler : IRequestHandler<GetActiveAuctionsQu
                 Id = a.Id,
                 MandarinId = a.MandarinId,
                 MandarinName = a.Mandarin.Name,
+                MandarinImageUrl = a.Mandarin.ImageUrl,
                 CurrentPrice = a.CurrentPrice,
                 StartingPrice = a.StartingPrice,
                 BuyoutPrice = a.BuyoutPrice,
