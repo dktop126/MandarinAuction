@@ -12,7 +12,7 @@ public class MandarinGeneratorHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<MandarinGeneratorHostedService> _logger;
-    private readonly TimeSpan _generationInterval = TimeSpan.FromSeconds(60);
+    private readonly TimeSpan _generationInterval = TimeSpan.FromMinutes(10);
 
     public MandarinGeneratorHostedService(
         IServiceProvider serviceProvider,

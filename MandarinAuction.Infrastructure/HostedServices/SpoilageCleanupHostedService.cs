@@ -12,7 +12,7 @@ public class SpoilageCleanupHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<SpoilageCleanupHostedService> _logger;
-    private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30);
+    private readonly TimeSpan _checkInterval = TimeSpan.FromDays(1);
 
     public SpoilageCleanupHostedService(
         IServiceProvider serviceProvider,

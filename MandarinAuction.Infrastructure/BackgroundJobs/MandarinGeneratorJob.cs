@@ -29,7 +29,7 @@ public class MandarinGeneratorJob
     public async Task GenerateMandarinAsync()
     {
         var now = DateTime.UtcNow;
-        var spoilTime = now.AddMinutes(2);
+        var spoilTime = now.AddDays(1);
 
         var mandarin = new Mandarin
         {

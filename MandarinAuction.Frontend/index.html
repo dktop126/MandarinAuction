@@ -167,6 +167,30 @@
         document.getElementById('userInfo').style.display = 'none';
     }
 
+    // Таймер обратного отсчета
+    function getTimeRemaining(endTime) {
+        const now = new Date();
+        const end = new Date(endTime);
+        const diff = end - now;
+
+        if (diff <= 0) {
+            return 'Завершён';
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        return `${hours}ч ${minutes}м ${seconds}с`;
+    }
+
+    function updateTimers() {
+        document.querySelectorAll('[id^="timer_"]').forEach(element => {
+            const endTime = element.getAttribute('data-endtime');
+            element.textContent = getTimeRemaining(endTime);
+        });
+    }
+    
     // Перевод статуса в текстовый формат
     function getAuctionStatusText(status) {
         switch(status) {
@@ -211,6 +235,7 @@
                                 <p><strong>Начальная цена:</strong> ${auction.startingPrice} ₽</p>
                                 ${auction.buyoutPrice ? `<p><strong>Цена выкупа:</strong> ${auction.buyoutPrice} ₽</p>` : ''}
                                 <p><strong>Окончание:</strong> ${new Date(auction.endTime).toLocaleString()}</p>
+                                <p><strong>Осталось:</strong> <span id="timer_${auction.id}" data-endtime="${auction.endTime}"></span></p>
                                 <p><strong>Статус:</strong> ${getAuctionStatusText(auction.status)}</p>
                                 ${token ? `
                                     <div style="margin-top: 10px;">
@@ -231,6 +256,7 @@
             auctionsList.textContent = 'Ошибка загрузки аукционов';
             console.error(error);
         }
+        updateTimers();
     }
 
     // Выкупить лот
@@ -358,6 +384,9 @@
 
     // Автоматическое обновление списка аукционов каждые 5 секунд
     //setInterval(loadAuctions, 5000);
+    setInterval(() => {
+        updateTimers();
+    }, 1000);
 </script>
 </body>
 </html>
