@@ -22,6 +22,4 @@ public class Bid
         Amount = amount;
         Timestamp = DateTime.UtcNow;
     }
-    
-    private Bid() {}
 }

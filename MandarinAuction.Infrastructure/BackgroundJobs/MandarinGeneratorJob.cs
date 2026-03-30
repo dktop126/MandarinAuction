@@ -35,6 +35,7 @@ public class MandarinGeneratorJob
         var auction = new Auction(
             mandarinId: mandarin.Id,
             startingPrice: 100,
+            buyoutPrice: 1000,
             endTime: spoilTime
         );
         

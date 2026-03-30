@@ -47,4 +47,17 @@ public class AuctionController : ControllerBase
         var auction = await _mediator.Send(command);
         return Ok(auction);
     }
+
+    [HttpPost("{id}/buyout")]
+    [Authorize]
+    public async Task<IActionResult> PlaceBuyout(Guid id)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var command = new BuyoutCommand(id, Guid.Parse(userId));
+        var auction = await _mediator.Send(command);
+        return Ok(auction);
+    }
 }

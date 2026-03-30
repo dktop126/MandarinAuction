@@ -13,6 +13,7 @@ public class Auction
     public Mandarin? Mandarin { get; set; }
     public decimal StartingPrice { get; private set; }
     public decimal CurrentPrice { get; private set; }
+    public decimal? BuyoutPrice { get; private set; }
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }
     public Guid? PreviousBidderId { get; private set; }
@@ -21,17 +22,37 @@ public class Auction
 
     public byte[]? RowVersion { get; set; }
 
-    public Auction(Guid mandarinId, decimal startingPrice, DateTime endTime)
+    public Auction(Guid mandarinId, decimal startingPrice, decimal? buyoutPrice, DateTime endTime)
     {
         Id = Guid.NewGuid();
         MandarinId = mandarinId;
         StartingPrice = startingPrice;
         CurrentPrice = startingPrice;
+        BuyoutPrice = buyoutPrice;
         StartTime = DateTime.UtcNow;
         EndTime = endTime;
         Status = AuctionStatus.Active;
     }
 
+    /// <summary>
+    /// Выкупает лот по цене выкупа. Закрывает аукцион немедленно.
+    /// </summary>
+    /// <param name="buyerId">ID покупателя</param>
+    /// <exception cref="AuctionClosedException">Если аукцион закрыт.</exception>
+    /// <exception cref="InvalidOperationException">Если нет цены выкупа.</exception>
+    public void Buyout(Guid buyerId)
+    {
+        if (Status == AuctionStatus.Closed || DateTime.UtcNow > EndTime)
+            throw new AuctionClosedException("Аукцмон уже завершен.");
+
+        if (!BuyoutPrice.HasValue)
+            throw new InvalidOperationException("Цена выкупа не установлена для этого лота.");
+        
+        PreviousBidderId = LastBidderId;
+        LastBidderId = buyerId;
+        CurrentPrice = BuyoutPrice.Value;
+        Status = AuctionStatus.Finished;
+    }
     /// <summary>
     /// Делает ставку. Проверяет статус аукциона и минимальную сумму.
     /// </summary>

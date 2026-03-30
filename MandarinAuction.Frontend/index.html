@@ -194,6 +194,7 @@
                             <h4>Лот #${auction.id}</h4>
                             <p><strong>Текущая цена:</strong> ${auction.currentPrice} ₽</p>
                             <p><strong>Начальная цена:</strong> ${auction.startingPrice} ₽</p>
+                            ${auction.buyoutPrice ? `<p><strong>Цена выкупа:</strong> ${auction.buyoutPrice} ₽</p>` : ''}
                             <p><strong>Окончание:</strong> ${new Date(auction.endTime).toLocaleString()}</p>
                             <p><strong>Статус:</strong> ${auction.status}</p>
                             ${token ? `
@@ -201,6 +202,7 @@
                                     <label>Размер ставки: </label>
                                     <input type="number" id="bidAmount_${auction.id}" placeholder="Мин. 200 ₽" min="200" step="100" style="width: 150px; padding: 5px;">
                                     <button onclick="placeBid('${auction.id}', document.getElementById('bidAmount_${auction.id}').value)">Сделать ставку</button>
+                                    ${auction.buyoutPrice ? `<button onclick="buyout('${auction.id}')" style="margin-left: 10px; background-color: #ff6b35; color: white;">Выкупить за ${auction.buyoutPrice} ₽</button>` : ''}
                                 </div>
                             ` : ''}
                         </div>
@@ -214,6 +216,55 @@
         }
     }
 
+    // Выкупить лот
+    async function buyout(auctionId) {
+        if (!token) {
+            alert('Сначала войдите в систему');
+            return;
+        }
+
+        if (!confirm('Вы уверены, что хотите выкупить этот лот? Аукцион будет завершён немедленно.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/auction/${auctionId}/buyout`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                alert('Лот выкуплен успешно! Чек отправлен на вашу почту.');
+                loadAuctions();
+            } else {
+                const errorText = await response.text();
+                try {
+                    const error = JSON.parse(errorText);
+                    let errorMessage = 'Не удалось выкупить лот';
+
+                    if (error.title && error.detail) {
+                        errorMessage = `${error.title}: ${error.detail}`;
+                    } else if (error.title) {
+                        errorMessage = error.title;
+                    } else if (error.detail) {
+                        errorMessage = error.detail;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+
+                    alert('Ошибка: ' + errorMessage);
+                } catch (e) {
+                    alert('Ошибка: ' + (errorText || 'Не удалось выкупить лот'));
+                }
+            }
+        } catch (error) {
+            alert('Ошибка соединения с сервером');
+            console.error('Network error:', error);
+        }
+    }
+    
     // Сделать ставку
     async function placeBid(auctionId, amount) {
         if (!token) {

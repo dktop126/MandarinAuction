@@ -8,53 +8,56 @@ using Microsoft.EntityFrameworkCore;
 namespace MandarinAuction.Application.Features.Auctions;
 
 /// <summary>
-/// Команда на размещение ставки.
-/// Содержит ID аукциона, ID пользователя и сумму ставки.
+/// Команда на выкуп лота (buyout).
 /// </summary>
-/// <param name="AuctionId"></param>
-/// <param name="UserId"></param>
-/// <param name="Amount"></param>
-public record PlaceBidCommand(Guid AuctionId, Guid UserId, decimal Amount) : IRequest<AuctionDto>;
+/// <param name="AuctionId">ID аукциона.</param>
+/// <param name="UserId">ID пользователя.</param>
+public record BuyoutCommand(Guid AuctionId, Guid UserId) : IRequest<AuctionDto>;
 
 /// <summary>
-/// Обработчик команды на размещение ставки.
-/// Проверяет аукцион, делает ставку, сохраняет её и отправляет уведомление предыдущему лидеру.
+/// Обработчик команды на выкуп лота.
+/// Выкупает лот по цене выкупа, закрывает аукцион и отправляет чек победителю.
 /// </summary>
-public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, AuctionDto>
+public class BuyoutCommandHandler : IRequestHandler<BuyoutCommand, AuctionDto>
 {
     private readonly IApplicationDbContext _context;
     private readonly IEmailService _emailService;
 
-    public PlaceBidCommandHandler(IApplicationDbContext context, IEmailService emailService)
+    public BuyoutCommandHandler(IApplicationDbContext context, IEmailService emailService)
     {
         _context = context;
         _emailService = emailService;
     }
 
-    public async Task<AuctionDto> Handle(PlaceBidCommand request, CancellationToken cancellationToken)
+    public async Task<AuctionDto> Handle(BuyoutCommand request, CancellationToken cancellationToken)
     {
         var auction = await _context.Auctions
             .Include(a => a.Mandarin)
             .FirstOrDefaultAsync(a => a.Id == request.AuctionId, cancellationToken);
-
+        
         if (auction == null)
             throw new NotFoundException($"Аукцион {request.AuctionId} не найден.");
-
+        
         var previousBidderId = auction.LastBidderId;
-        auction.PlaceBid(request.UserId, request.Amount);
-
-        var bid = new Bid(request.AuctionId, request.UserId, request.Amount);
+        auction.Buyout(request.UserId);
+        
+        var bid = new Bid(request.AuctionId, request.UserId, auction.CurrentPrice);
         _context.Bids.Add(bid);
 
         await _context.SaveChangesAsync();
 
+        var winner = await _context.Users
+            .FindAsync(new object[] { request.UserId }, cancellationToken);
+        if (winner != null)
+            await _emailService.SendWinReceiptNotificationAsync(winner.Email, request.AuctionId, auction.CurrentPrice);
+
         if (previousBidderId.HasValue)
         {
             var previousBidder = await _context.Users
-                .FindAsync(new object[] { previousBidderId.Value }, cancellationToken);
+                .FindAsync(new object[] { previousBidderId }, cancellationToken);
             if (previousBidder != null)
-                await _emailService.SendOutbidNotificationAsync(previousBidder.Email, request.AuctionId,
-                    request.Amount);
+                await _emailService.SendOutbidNotificationAsync(previousBidder.Email, 
+                    request.AuctionId, auction.CurrentPrice);
         }
 
         return new AuctionDto
@@ -64,7 +67,6 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, AuctionDt
             MandarinName = auction.Mandarin?.Name ?? string.Empty,
             CurrentPrice = auction.CurrentPrice,
             StartingPrice = auction.StartingPrice,
-            BuyoutPrice = auction.BuyoutPrice,
             EndTime = auction.EndTime,
             Status = auction.Status,
             BidCount = _context.Bids.Count(b => b.AuctionId == auction.Id),
