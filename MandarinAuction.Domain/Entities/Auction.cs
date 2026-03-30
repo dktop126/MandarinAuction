@@ -14,6 +14,7 @@ public class Auction
     public decimal StartingPrice { get; private set; }
     public decimal CurrentPrice { get; private set; }
     public decimal? BuyoutPrice { get; private set; }
+    public decimal MinBidIncrement { get; private set; }
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }
     public Guid? PreviousBidderId { get; private set; }
@@ -22,13 +23,14 @@ public class Auction
 
     public byte[]? RowVersion { get; set; }
 
-    public Auction(Guid mandarinId, decimal startingPrice, decimal? buyoutPrice, DateTime endTime)
+    public Auction(Guid mandarinId, decimal startingPrice, decimal? buyoutPrice, decimal minBidIncrement, DateTime endTime)
     {
         Id = Guid.NewGuid();
         MandarinId = mandarinId;
         StartingPrice = startingPrice;
         CurrentPrice = startingPrice;
         BuyoutPrice = buyoutPrice;
+        MinBidIncrement = minBidIncrement;
         StartTime = DateTime.UtcNow;
         EndTime = endTime;
         Status = AuctionStatus.Active;
@@ -65,6 +67,11 @@ public class Auction
 
         if (amount <= CurrentPrice)
             throw new BidTooLowException("Ставка должна быть выше текущей.");
+
+        var minimumBid = CurrentPrice + MinBidIncrement;
+        if (amount < minimumBid)
+            throw new BidTooLowException($"Ставка должна быть выше текущей как минимум на {MinBidIncrement} ₽." +
+                                         $" Минимальная допустимая ставка: {minimumBid} ₽.");
 
         if (newBidderId == LastBidderId)
             throw new BidTooLowException("Ваша ставка уже является максимальной.");

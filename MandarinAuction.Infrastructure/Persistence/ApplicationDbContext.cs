@@ -39,6 +39,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.StartingPrice).IsRequired().HasPrecision(18, 2);
             entity.Property(e => e.CurrentPrice).IsRequired().HasPrecision(18, 2);
+            entity.Property(e => e.MinBidIncrement).IsRequired().HasPrecision(18, 2);
             entity.Property(e => e.RowVersion).IsRowVersion();
         });
 

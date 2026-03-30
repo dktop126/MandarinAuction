@@ -65,6 +65,7 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, AuctionDt
             CurrentPrice = auction.CurrentPrice,
             StartingPrice = auction.StartingPrice,
             BuyoutPrice = auction.BuyoutPrice,
+            MinBidIncrement =  auction.MinBidIncrement,
             EndTime = auction.EndTime,
             Status = auction.Status,
             BidCount = _context.Bids.Count(b => b.AuctionId == auction.Id),

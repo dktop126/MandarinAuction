@@ -67,6 +67,7 @@ public class BuyoutCommandHandler : IRequestHandler<BuyoutCommand, AuctionDto>
             MandarinName = auction.Mandarin?.Name ?? string.Empty,
             CurrentPrice = auction.CurrentPrice,
             StartingPrice = auction.StartingPrice,
+            MinBidIncrement =  auction.MinBidIncrement,
             EndTime = auction.EndTime,
             Status = auction.Status,
             BidCount = _context.Bids.Count(b => b.AuctionId == auction.Id),

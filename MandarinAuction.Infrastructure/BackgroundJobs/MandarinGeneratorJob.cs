@@ -36,6 +36,7 @@ public class MandarinGeneratorJob
             mandarinId: mandarin.Id,
             startingPrice: 100,
             buyoutPrice: 1000,
+            minBidIncrement: 100,
             endTime: spoilTime
         );
         

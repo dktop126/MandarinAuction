@@ -38,6 +38,7 @@ public class GetActiveAuctionsQueryHandler : IRequestHandler<GetActiveAuctionsQu
                 CurrentPrice = a.CurrentPrice,
                 StartingPrice = a.StartingPrice,
                 BuyoutPrice = a.BuyoutPrice,
+                MinBidIncrement =  a.MinBidIncrement,
                 EndTime = a.EndTime,
                 Status = a.Status,
                 BidCount = _context.Bids.Count(b => b.AuctionId == a.Id)

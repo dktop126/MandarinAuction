@@ -189,6 +189,7 @@
 
             let html = '';
             auctions.forEach(auction => {
+                const minBid = auction.currentPrice + auction.minBidIncrement;
                 html += `
                         <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
                             <h4>Лот #${auction.id}</h4>
@@ -200,8 +201,9 @@
                             ${token ? `
                                 <div style="margin-top: 10px;">
                                     <label>Размер ставки: </label>
-                                    <input type="number" id="bidAmount_${auction.id}" placeholder="Мин. 200 ₽" min="200" step="100" style="width: 150px; padding: 5px;">
+                                    <input type="number" id="bidAmount_${auction.id}" placeholder="Мин. ${minBid} ₽" min="${minBid}" step="${auction.minBidIncrement}" style="width: 150px; padding: 5px;">
                                     <button onclick="placeBid('${auction.id}', document.getElementById('bidAmount_${auction.id}').value)">Сделать ставку</button>
+                                    <button onclick="quickBid('${auction.id}', ${minBid})" style="margin-left: 5px;">+1 шаг</button>
                                     ${auction.buyoutPrice ? `<button onclick="buyout('${auction.id}')" style="margin-left: 10px; background-color: #ff6b35; color: white;">Выкупить за ${auction.buyoutPrice} ₽</button>` : ''}
                                 </div>
                             ` : ''}
@@ -264,6 +266,11 @@
             console.error('Network error:', error);
         }
     }
+
+    // Быстрая ставка (+1 шаг)
+    function quickBid(auctionId, minBidAmount) {
+        placeBid(auctionId, minBidAmount);
+    }
     
     // Сделать ставку
     async function placeBid(auctionId, amount) {
@@ -273,8 +280,8 @@
         }
         
         const bidAmount = parseFloat(amount);
-        if (!bidAmount || bidAmount < 200) {
-            alert('Минимальный размер ставки: 200 ₽');
+        if (!bidAmount) {
+            alert('Введите сумму ставки');
             return;
         }
         

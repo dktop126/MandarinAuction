@@ -13,6 +13,7 @@ public class AuctionDto
     public decimal CurrentPrice { get; set; }
     public decimal StartingPrice { get; set; }
     public decimal? BuyoutPrice { get; set; }
+    public decimal MinBidIncrement { get; set; }
     public DateTime EndTime { get; set; }
     public AuctionStatus Status { get; set; }
     public int BidCount { get; set; }
