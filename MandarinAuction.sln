@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.API", "MandarinAuction.API\MandarinAuction.API.csproj", "{40CFAECB-7E94-4157-A643-7D7AA14A9E5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.Domain", "MandarinAuction.Domain\MandarinAuction.Domain.csproj", "{0474BAB5-C729-4DEC-8647-681E6E1A5649}"
@@ -7,6 +8,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.Application", "MandarinAuction.Application\MandarinAuction.Application.csproj", "{388C519E-907A-4B63-BBCA-2822B2A0FBCB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.Infrastructure", "MandarinAuction.Infrastructure\MandarinAuction.Infrastructure.csproj", "{91C063B6-8BD0-421B-BC23-2CFFDBE8A06D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MandarinAuction.Tests", "MandarinAuction.Tests\MandarinAuction.Tests.csproj", "{41C34A71-ECC5-467F-83B3-2222AA4A1883}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,5 +37,9 @@ Global
 		{AD95EC3C-911C-46C4-885E-552B89C2D1F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD95EC3C-911C-46C4-885E-552B89C2D1F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD95EC3C-911C-46C4-885E-552B89C2D1F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41C34A71-ECC5-467F-83B3-2222AA4A1883}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41C34A71-ECC5-467F-83B3-2222AA4A1883}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41C34A71-ECC5-467F-83B3-2222AA4A1883}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41C34A71-ECC5-467F-83B3-2222AA4A1883}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
