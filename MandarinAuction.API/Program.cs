@@ -59,7 +59,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200","http://192.168.1.125:8080")
+        policy.WithOrigins("http://localhost:4200","http://localhost:8080","http://192.168.1.125:8080")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -73,6 +73,22 @@ builder.Services.AddSwaggerGen();
 
 // Pipeline
 var app = builder.Build();
+
+// Автоматическое применение миграций при запуске
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

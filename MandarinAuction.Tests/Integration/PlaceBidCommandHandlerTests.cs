@@ -2,7 +2,6 @@
 using MandarinAuction.Application.Features.Auctions;
 using MandarinAuction.Application.Interfaces;
 using MandarinAuction.Domain.Entities;
-using MandarinAuction.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
