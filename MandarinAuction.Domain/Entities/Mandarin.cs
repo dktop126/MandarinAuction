@@ -29,4 +29,12 @@ public class Mandarin
             Status = MandarinStatus.Spoiled;
         }
     }
+
+    /// <summary>
+    /// Помечает мандарин как проданный.
+    /// </summary>
+    public void MarkAsSold()
+    {
+        Status = MandarinStatus.Sold;
+    }
 }

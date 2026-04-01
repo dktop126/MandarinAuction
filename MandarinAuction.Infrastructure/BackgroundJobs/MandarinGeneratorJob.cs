@@ -29,14 +29,15 @@ public class MandarinGeneratorJob
     public async Task GenerateMandarinAsync()
     {
         var now = DateTime.UtcNow;
-        var spoilTime = now.AddDays(1);
-
+        
+        var nextMidnight = now.Date.AddDays(1);
+        
         var mandarin = new Mandarin
         {
             Name = $"Мандаринка №{_random.Next(1000, 9999)}",
             ImageUrl = MandarinImages[_random.Next(MandarinImages.Length)],
             CreatedAt = now,
-            SpoilAt = spoilTime,
+            SpoilAt = nextMidnight,
             Status = MandarinStatus.InAuction
         };
         
@@ -47,7 +48,7 @@ public class MandarinGeneratorJob
             startingPrice: 100,
             buyoutPrice: 1000,
             minBidIncrement: 100,
-            endTime: spoilTime
+            endTime: nextMidnight
         );
         
         _context.Auctions.Add(auction);

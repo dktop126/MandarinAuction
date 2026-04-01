@@ -40,6 +40,7 @@ public class BuyoutCommandHandler : IRequestHandler<BuyoutCommand, AuctionDto>
         
         var previousBidderId = auction.LastBidderId;
         auction.Buyout(request.UserId);
+        auction.Mandarin?.MarkAsSold();
         
         var bid = new Bid(request.AuctionId, request.UserId, auction.CurrentPrice);
         _context.Bids.Add(bid);

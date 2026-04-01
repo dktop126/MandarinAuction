@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 namespace MandarinAuction.Infrastructure.HostedServices;
 
 /// <summary>
-/// Фоновый сервис для периодической обработки завершенных аукционов.
+/// Фоновый сервис для ежедневной обработки аукционов в 00:00 UTC.
+/// Обрабатывает испорченные мандарины и завершает аукционы с победителями.
 /// </summary>
 public class AuctionCompletionHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<AuctionCompletionHostedService> _logger;
-    private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30);
 
     public AuctionCompletionHostedService(
         IServiceProvider serviceProvider,
@@ -30,25 +30,30 @@ public class AuctionCompletionHostedService : BackgroundService
         {
             try
             {
+                var now = DateTime.UtcNow;
+                var nextMidnight = now.Date.AddDays(1); // Следующая полночь 00:00 UTC
+                var delay = nextMidnight - now;
+
+                _logger.LogInformation("Следующая обработка аукционов в {NextRun} (через {Delay})", 
+                    nextMidnight, delay);
+
+                await Task.Delay(delay, stoppingToken);
+
                 using var scope = _serviceProvider.CreateScope();
                 var job = scope.ServiceProvider.GetRequiredService<AuctionCompletionJob>();
 
-                var finishedCount = await job.ProcessFinishedAuctions();
-                if (finishedCount > 0)
-                {
-                    _logger.LogInformation("Обработано завершенных аукционов: {Count}," +
-                                           " уведомления отправлены в {Time}", finishedCount, DateTime.UtcNow);
-                }
-                else
-                {
-                    _logger.LogInformation("Нет завершенных аукционов для обработки");
-                }
+                var (spoiledCount, finishedCount) = await job.ProcessDailyAuctionCleanup();
+                
+                _logger.LogInformation(
+                    "Ежедневная обработка завершена в {Time}: испорчено мандаринов: {Spoiled}, завершено аукционов: {Finished}",
+                    DateTime.UtcNow, spoiledCount, finishedCount);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Ошибка при обработе завершенных аукционов в {Time}", DateTime.UtcNow);
+                _logger.LogError(ex, "Ошибка при обработке аукционов в {Time}", DateTime.UtcNow);
+                // В случае ошибки ждем 1 минуту перед повторной попыткой
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             }
-            await Task.Delay(_checkInterval, stoppingToken);
         }
         _logger.LogInformation("Auction Completion Service остановлен");
     }

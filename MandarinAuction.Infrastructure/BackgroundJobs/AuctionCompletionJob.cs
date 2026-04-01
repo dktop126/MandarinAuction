@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace MandarinAuction.Infrastructure.BackgroundJobs;
 
 /// <summary>
-/// Задача для обработки завершенных аукционов.
-/// Отправляет уведомление победителю в аукционе.
+/// Задача для обработки завершенных аукционов и испорченных мандаринов.
+/// Выполняется ежедневно в 00:00 UTC.
+/// Сначала завершает аукционы с победителями, затем помечает оставшиеся мандарины как испорченные.
 /// </summary>
 public class AuctionCompletionJob
 {
@@ -19,35 +20,46 @@ public class AuctionCompletionJob
         _emailService = emailService;
     }
 
-    public async Task<int> ProcessFinishedAuctions()
+    public async Task<(int spoiled, int finished)> ProcessDailyAuctionCleanup()
     {
         var now = DateTime.UtcNow;
+        
         var finishedAuctions = await _context.Auctions
             .Include(a => a.Mandarin)
-            .Where(a => a.Status == AuctionStatus.Active && a.EndTime < now)
+            .Where(a => a.Status == AuctionStatus.Active && 
+                        a.EndTime <= now &&
+                        a.LastBidderId.HasValue)
             .ToListAsync();
-
-        if (finishedAuctions.Count == 0)
-            return 0;
 
         foreach (var auction in finishedAuctions)
         {
             auction.Finish();
-
-            if (auction.LastBidderId.HasValue)
+            auction.Mandarin?.MarkAsSold();
+            
+            var winner = await _context.Users.FindAsync(new object[] { auction.LastBidderId.Value });
+            if (winner != null)
             {
-                var winner = await _context.Users.FindAsync(new object[] { auction.LastBidderId.Value });
-                if (winner != null)
-                {
-                    await _emailService.SendWinReceiptNotificationAsync(
-                        winner.Email,
-                        auction.Id,
-                        auction.CurrentPrice);
-                }
+                await _emailService.SendWinReceiptNotificationAsync(
+                    winner.Email,
+                    auction.Id,
+                    auction.CurrentPrice);
             }
         }
         
-        await  _context.SaveChangesAsync();
-        return finishedAuctions.Count;
+        var expiredMandarins = await _context.Mandarins
+            .Include(m => m.Auction)
+            .Where(m => m.Status != MandarinStatus.Sold &&
+                        m.Status != MandarinStatus.Spoiled &&
+                        m.SpoilAt <= now)
+            .ToListAsync();
+
+        foreach (var mandarin in expiredMandarins)
+        {
+            mandarin.MarkAsSpoiled(now);
+            mandarin.Auction?.CloseAsSpoiled();
+        }
+        
+        await _context.SaveChangesAsync();
+        return (expiredMandarins.Count, finishedAuctions.Count);
     }
 }
